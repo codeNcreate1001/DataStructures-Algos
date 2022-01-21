@@ -1,0 +1,62 @@
+void findPos(vector<vector<string>>&ans,vector<string>&board,int n,vector<int>&currentRow,
+             vector<int>&leftLowerDiagonal,vector<int>&leftUpperDiagonal,int col=0)
+{
+    if(col==n)
+    {
+        ans.push_back(board);
+        return;       
+    }
+    for(int row = 0;row<n;row++)
+    {   
+        // if there are no queen placed in the current row, or the diagonals doesn't contain any queen then we can place a queen in the current position 
+        if(currentRow[row]==0 and leftLowerDiagonal[row + col]==0 and leftUpperDiagonal[n - 1 + col - row]==0) 
+        {
+            board[row][col] = 'Q'; // mark the position of the queen as Q
+            currentRow[row] = 1; // mark the presence of a queen at the current row
+            leftLowerDiagonal[row + col] = 1; // mark the presence of diagonals it can affect 
+            leftUpperDiagonal[n - 1 + col - row] = 1; 
+            findPos(ans,board,n,currentRow,leftLowerDiagonal,leftUpperDiagonal,col+1); // jump to next recursion
+            board[row][col] = '.'; // backtracking step
+            currentRow[row] = 0;
+            leftLowerDiagonal[row + col] = 0;
+            leftUpperDiagonal[n - 1 + col - row] = 0;
+        }
+    }
+}
+
+vector<vector<string>>nQueens(int n)
+{
+    vector<vector<string>>ans; // to store the possible permutations of placing the queens
+    vector<string>board; // the board where the queen needs to be placed
+    string s(n,'.'); 
+    for(int i=0;i<n;i++)
+        board.push_back(s); // filling the board with '.' which means the position is empty
+
+    vector<int>currentRow(n,0); // used for hashing if there's already a queen placed in the current row
+    vector<int>leftUpperDiagonal(2*n-1,0); // used for hashing if there's already a queen placed the left Upper Diagonal
+    vector<int>leftLowerDiagonal(2*n-1,0); // used for hashing if there's alerady a queen placed in the left lower diagonal
+    findPos(ans,board,n,currentRow,leftLowerDiagonal,leftUpperDiagonal);
+    return ans;
+}
+
+void solve() {
+ int n;
+    cin>>n;
+    vector<vector<string>>s;
+    s = nQueens(n);
+    if(!s.empty())
+    {
+        for(auto it:s)
+        {
+            for(auto it1:it){
+                {
+                    for(auto it2:it1)
+                        cout<<it2<<" ";
+                }
+            cout<<"\n";}
+            cout<<"\n";
+        }
+    }
+    else
+        cout<<"No possible way of placing "<<n<<" Queens\n";
+}
