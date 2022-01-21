@@ -12,14 +12,10 @@ void findPos(vector<vector<string>>&ans,vector<string>&board,int n,vector<int>&c
         if(currentRow[row]==0 and leftLowerDiagonal[row + col]==0 and leftUpperDiagonal[n - 1 + col - row]==0) 
         {
             board[row][col] = 'Q'; // mark the position of the queen as Q
-            currentRow[row] = 1; // mark the presence of a queen at the current row
-            leftLowerDiagonal[row + col] = 1; // mark the presence of diagonals it can affect 
-            leftUpperDiagonal[n - 1 + col - row] = 1; 
+            currentRow[row] = leftLowerDiagonal[row + col] = leftUpperDiagonal[n - 1 + col - row] = 1; // mark the presence of a queen
             findPos(ans,board,n,currentRow,leftLowerDiagonal,leftUpperDiagonal,col+1); // jump to next recursion
             board[row][col] = '.'; // backtracking step
-            currentRow[row] = 0;
-            leftLowerDiagonal[row + col] = 0;
-            leftUpperDiagonal[n - 1 + col - row] = 0;
+            currentRow[row] = leftLowerDiagonal[row + col] = leftUpperDiagonal[n - 1 + col - row] = 0; // unmark the presence of a queen
         }
     }
 }
