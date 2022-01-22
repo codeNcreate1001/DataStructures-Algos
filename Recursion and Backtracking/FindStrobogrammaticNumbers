@@ -1,0 +1,57 @@
+vector<string>helper(int n, int m) {
+	if(n==0)	return {""};
+	if(n==1)	return {"0","1","8"};
+	vector<string>temp = helper(n-2,m);
+	vector<string>res;
+	for(auto &s:temp) {
+		if(n < m) res.push_back("0"+s+"0");
+		res.push_back("1"+s+"1");
+		res.push_back("8"+s+"8");
+		res.push_back("6"+s+"9");
+		res.push_back("9"+s+"6");
+	}
+	return res;
+}
+
+vector<string>findStrobogrammaticNumbersRecursive(int n) {
+	return helper(n,n);
+}
+
+vector<string>findStrobogrammaticNumbersIterative(int n) {
+	vector<string>res;
+	if((n & 1 )== 0)		res.push_back("");
+	else {
+		res.push_back("0");
+		res.push_back("1");
+		res.push_back("8");
+	}
+	int i = (! (n&1) ) ? 2:3; // if even i = 2 else i = 3
+	for(;i<=n;i+=2) {
+		vector<string>temp;
+		for(auto &s:res) {
+			if(i!=n) 	temp.push_back("0"+s+"0");
+		 	temp.push_back("1"+s+"1");
+		 	temp.push_back("8"+s+"8");
+		 	temp.push_back("6"+s+"9");
+		 	temp.push_back("9"+s+"6");
+		}
+		res = temp;
+	}
+	return res;
+}
+
+void solve() {
+	int n;
+	cin>>n;
+
+	vector<string>res1 = findStrobogrammaticNumbersRecursive(n);
+ 	vector<string>res2 = findStrobogrammaticNumbersIterative(n);
+
+ 	for(auto &s:res1) if(s!="")	cout<<s<<"\n";
+ 	cout<<"Total Strobogrammatic Numbers = "<<((res1.size()!=1)?res1.size():0)<<"\n";
+
+ 	cout<<"\n****************\n\n";
+
+ 	for(auto &s:res2) if(s!="")	cout<<s<<"\n";
+ 	cout<<"Total Strobogrammatic Numbers = "<<((res2.size()!=1)?res2.size():0);
+}
