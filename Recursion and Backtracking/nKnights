@@ -1,0 +1,48 @@
+void display(vector<vector<bool>>&board) {
+	for(auto &it:board) {
+		for(int i=0;i<board.size();i++) {
+			bool el = it[i];
+			if(not el) cout<<".";
+			else cout<<"K";
+		}
+		cout<<"\n";
+	}
+	cout<<"\n**************************\n\n";
+	return;
+}
+
+bool isValidPos(int row,int col, int n) {
+	return ((row>=0 and col >=0) and (row<n and col<n));
+}
+
+bool isSafe(int row, int col, vector<vector<bool>>&board) {
+	if(isValidPos(row-2,col-1,board.size()) and board[row-2][col-1]) return false;
+	if(isValidPos(row-1,col-2,board.size()) and board[row-1][col-2]) return false;
+	if(isValidPos(row-1,col+2,board.size()) and board[row-1][col+2]) return false;
+	if(isValidPos(row-2,col+1,board.size()) and board[row-2][col+1]) return false;
+	return true;
+}
+
+void nKnights(int n, int &ways, vector<vector<bool>>&board, int sr =0, int sc=0, int placed=0) {
+	if(placed == n) {
+		display(board);
+		ways++;
+		return;
+	}
+	for(int row=sr;row<n;row++) {
+		for(int col = (row==sr)? sc:0;col<n;col++) {
+			if(not board[row][col] and isSafe(row,col,board)) {
+				board[row][col] = 1;
+				nKnights(n,ways,board,row,col+1,placed+1);
+				board[row][col] = 0;
+			}
+		}
+	}
+}
+
+int totalWays(int n) {
+	vector<vector<bool>>board(n,vector<bool>(n,0));
+	int ways = 0;
+	nKnights(n,ways,board);
+	return ways;
+}
