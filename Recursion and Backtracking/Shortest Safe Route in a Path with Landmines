@@ -1,0 +1,72 @@
+vector<int>rowDir = {-1,0,0,1}; // previousRow nextRow
+vector<int>colDir = {0,-1,1,0}; // previousCol nextCol
+
+bool isSafe(vector<vector<int>>&grid,vector<vector<bool>>&visited,int nextRow, int nextCol) {
+	return !(grid[nextRow][nextCol]==0 or visited[nextRow][nextCol] == 1);
+}
+
+bool isValidPos(int row, int col, int rowBound, int colBound) {
+	return((row>=0 and col>=0) and (row<rowBound and col<colBound));
+}
+
+void markAdjacentsUnsafe(vector<vector<int>>&grid, int landMineRow, int landMineCol) {
+	int rowBound = grid.size();
+	int colBound = grid[0].size();
+	for(int point=0;point<4;point++) {
+		int r = landMineRow + rowDir[point];
+		int c = landMineCol + colDir[point];
+		if(isValidPos(r,c,rowBound,colBound)) {
+			grid[r][c]=-1;
+		}
+	}
+}
+
+void markUnsafePos(vector<vector<int>>&grid,const int rowBound, const int colBound) {
+	for(int row=0;row<rowBound;row++) {
+		for(int col=0;col<colBound;col++) {
+			if(grid[row][col] == 0) { // landmine 
+				markAdjacentsUnsafe(grid,row,col);
+			}
+		}
+	}
+	for(int row=0;row<rowBound;row++) {
+		for(int col=0;col<colBound;col++) {
+			if(grid[row][col] == -1) grid[row][col] = 0;
+		}
+	}
+}
+
+void findShortestPathHelper(vector<vector<int>>&grid,vector<vector<bool>>&visited,int currentRow, int currentCol, int &minDist, int currentDist=0) {
+	if(currentCol == grid[0].size()-1) {
+		minDist = min(minDist,currentDist);
+		return;
+	}
+	if(currentDist > minDist) return;
+
+	visited[currentRow][currentCol] = 1;
+	for(int adjacent=0;adjacent<4;adjacent++) {
+		int nextRow = currentRow + rowDir[adjacent];
+		int nextCol = currentCol + colDir[adjacent];
+		if(isValidPos(nextRow,nextCol,grid.size(),grid[0].size()) and isSafe(grid,visited,nextRow, nextCol)) {
+			findShortestPathHelper(grid,visited, nextRow, nextCol, minDist,currentDist+1);
+		}
+	} 
+	visited[currentRow][currentCol] = 0;
+}
+
+int findShortestPath(vector<vector<int>>&grid) {
+	int rowBound = grid.size();
+	int colBound = grid[0].size();
+	markUnsafePos(grid, rowBound, colBound);
+
+	int startCol = 0;
+	int minDist = INT_MAX;
+	for(int row=0;row<rowBound;row++) {
+		if(grid[row][startCol] == 1) {
+			vector<vector<bool>>visited(rowBound, vector<bool>(colBound,0));
+			findShortestPathHelper(grid, visited, row, startCol, minDist);
+			if(minDist == colBound-1) break; // Displacement : straight path
+		}
+	}
+	return (minDist == INT_MAX)?-1:minDist;
+}
