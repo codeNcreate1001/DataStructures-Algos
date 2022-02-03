@@ -1,0 +1,44 @@
+bool canPartitionHelper(const vector<int>&nums, vector<bool>&visited, vector<int>&ds, vector<vector<int>>&ans, int k, int targetSum, int currSum=0, int ind=0) {
+	if(k==1) {
+		ds.clear();
+		for(int i=0;i<nums.size();i++) {
+			if(not visited[i]) ds.push_back(nums[i]);
+		}
+		ans.push_back(ds);
+		return 1;
+	}
+	if(targetSum == currSum) {
+		ans.push_back(ds);
+		ds.clear();
+		return canPartitionHelper(nums,visited,ds,ans,k-1,targetSum,0,0);
+	}
+
+	for(int i=ind;i<nums.size();i++) {
+		if(not visited[i] and currSum+nums[i]<=targetSum) {
+			visited[i]=1;
+			ds.push_back(nums[i]);
+			if(canPartitionHelper(nums,visited,ds,ans,k,targetSum,currSum+nums[i],i+1)) return 1;
+			ds.pop_back();
+			visited[i]=0;
+		}
+	}
+	return 0;
+}
+
+bool canPartition(vector<int>&nums, int k) {
+	int sum=0; sum = accumulate(nums.begin(), nums.end(),sum);
+	if(nums.size()==0 || k==0 || nums.size()<k || sum%k!=0) return 0;
+	vector<bool>visited(nums.size(),0);
+	vector<int>ds;
+	vector<vector<int>>ans;
+	int targetSum = sum/k;
+	bool res = canPartitionHelper(nums,visited,ds,ans,k,targetSum);
+	if(res) {
+    	for(auto &it:ans) {
+    		cout<<it.size()<<"\n";
+    		for(auto &it1:it) cout<<it1<<" ";
+    		cout<<"\n";
+    	}
+    }
+    return res;
+}
