@@ -1,0 +1,56 @@
+void findAbbreviationsHelper(string &s, string &out,vector<string>&res, int count=0, int ind=0) {
+	if(ind==s.length()) {
+		if(count>0) {
+			string countSoFar = to_string(count);
+			int n = countSoFar.length();
+			out+=countSoFar;
+			res.push_back(out);
+			while(n--) out.pop_back();
+		}
+		else res.push_back(out);
+		return;
+	}
+	findAbbreviationsHelper(s,out,res,count+1,ind+1);
+	if(count>0) {
+		string countSoFar = to_string(count);
+		int n = countSoFar.length() + 1;
+		out+=countSoFar; out.push_back(s[ind]);
+		findAbbreviationsHelper(s,out,res,0,ind+1);
+		while(n--) out.pop_back();
+	} else {
+		out.push_back(s[ind]);
+		findAbbreviationsHelper(s,out,res,0,ind+1);
+		out.pop_back();
+	}
+}
+
+vector<string>findAbbreviationsBackTracking(string &s) {
+	vector<string>res;
+	if(s.empty()) return res;
+	string out="";
+	findAbbreviationsHelper(s,out,res);
+	return res;
+}
+
+vector<string>findAbbreviationsBitmasking(string &s) {
+	if(s.empty()) return {};
+	int n = s.length();
+	int maskBound = (1<<n);
+	vector<string>res;
+	for(int mask=0;mask<maskBound;mask++) {
+		string out="";
+		int countAdjSetBits=0;
+		for(int checkBit=n-1;checkBit>=0;checkBit--) {
+			if((mask&(1<<checkBit))==0) {
+				if(countAdjSetBits!=0) {
+					out+=to_string(countAdjSetBits);
+					countAdjSetBits=0;
+				}
+				out.push_back(s[n-1-checkBit]);
+			} else countAdjSetBits++;
+		}
+		if(countAdjSetBits!=0) out+=to_string(countAdjSetBits);
+		res.push_back(out);
+	}
+	return res;
+}
