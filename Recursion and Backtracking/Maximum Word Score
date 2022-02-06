@@ -68,4 +68,36 @@ pair<vector<string>,int> maxScoreOfWords(vector<string>&words, vector<char>&lett
 }
 
 // Can also be done Using Bitmasking
+int maxScoreWords(vector<string>& words, vector<char>& letters, vector<int>& score) {
+    int ans=0;
+    vector<int> charFreq(26,0);
 
+    for(auto x:letters) charFreq[x-'a']++;
+
+    int totalSubsets,mostSignificantBit;
+    totalSubsets = words.size();
+    mostSignificantBit = words.size() - 1;
+    int maskBound = (1<<totalSubsets);
+
+    for(int mask = 1;mask < maskBound;mask++){
+        int res=0;
+        vector<int> tempCharFreq=charFreq;
+        bool valid=1;
+        for(int checkBit=mostSignificantBit;checkBit>=0;checkBit--){
+            if((mask>>checkBit)&1){
+                string word=words[checkBit];
+                for(auto &ch:word){
+                    tempCharFreq[ch-'a']--;
+                    if(tempCharFreq[ch-'a']<0){
+                        valid=0;
+                        break;
+                    }
+                    else res+=score[ch-'a'];
+                }
+            }
+            if(valid==0)break;
+        }
+        if(valid==1)ans=max(ans,res);
+    }
+    return ans;
+}
