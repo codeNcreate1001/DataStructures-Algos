@@ -1,0 +1,71 @@
+// Recursive Approach
+
+int maxScoreHelper(vector<string>&validWordDict,vector<string>&ds,vector<string>&res,vector<int>&validWordScore,vector<int>&charFreq,int &maxScore,int scoreSoFar=0,int ind=0){
+	if(ind == validWordDict.size()){
+		if(maxScore<scoreSoFar) {
+			maxScore = scoreSoFar;
+			res = ds;
+		}
+		return 0;
+	} 
+
+	int wordNotIncluded = 0;
+	wordNotIncluded+=maxScoreHelper(validWordDict,ds,res,validWordScore,charFreq,maxScore,scoreSoFar,ind+1);
+
+	int wordIncluded = 0;
+	string currWord = validWordDict[ind];
+	bool includePossible = 1;
+
+	for(int i=0;i<currWord.size();i++) {
+		char ch = currWord[i];
+		if(charFreq[ch-'a']<=0) includePossible = 0;
+		charFreq[ch-'a']--;
+	}
+
+	if(includePossible) {
+		ds.push_back(currWord);
+		wordIncluded+=validWordScore[ind] + maxScoreHelper(validWordDict,ds,res,validWordScore,charFreq,maxScore,scoreSoFar+validWordScore[ind],ind+1);
+		ds.pop_back();
+	}
+	for(int i=0;i<currWord.size();i++) {
+		char ch = currWord[i];
+		charFreq[ch-'a']++;
+	}
+	return max(wordIncluded,wordNotIncluded);
+}
+
+pair<vector<string>,int> maxScoreOfWords(vector<string>&words, vector<char>&letters, vector<int>&score) {
+	pair<vector<string>,int>ans;
+	if(words.empty()) return ans;
+
+	vector<int>charFreq(26,0);
+	for(auto &ch:letters) charFreq[ch-'a']++;
+
+	vector<string>validWordDict; vector<int>validWordScore;
+	for(auto &word:words) {
+		bool validWord = 1;
+		string currWord = word; int currWordScore = 0;
+		for(auto &ch:currWord) {
+			if(charFreq[ch-'a']!=0)
+				currWordScore+=score[ch-'a'];
+			else {
+				validWord = 0;
+				break;
+			}
+		}
+		if(validWord) {
+			validWordDict.push_back(currWord);
+			validWordScore.push_back(currWordScore);
+		}
+	}
+
+	vector<string>ds,res;
+	int maxScore = INT_MIN;
+	int maxSubsetScore = maxScoreHelper(validWordDict,ds,res,validWordScore,charFreq,maxScore);
+
+	ans = {res,maxSubsetScore};
+	return ans;		
+}
+
+// Can also be done Using Bitmasking
+
