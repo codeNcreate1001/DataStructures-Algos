@@ -1,0 +1,43 @@
+void friendsPairingHelper(const int n,vector<bool>&sorted, string&osf, int ind=1) {
+	if(ind > n) {
+		cout<<osf<<"\n";
+		return;
+	}
+
+	if(sorted[ind]) {
+		friendsPairingHelper(n,sorted,osf,ind+1); // if already sorted, consider chances for the next person
+	} else {
+
+		// single
+		sorted[ind] = 1;
+		osf.push_back('('); osf.push_back('0'+ind); osf.push_back(')');
+		friendsPairingHelper(n,sorted,osf,ind+1);
+		for(int i=0;i<3;i++) osf.pop_back();
+
+		for(int pairUp=ind+1;pairUp<=n;pairUp++) {
+			if(not sorted[pairUp]) {
+				sorted[pairUp]=1;
+				osf.push_back('('); osf.push_back('0'+ind); osf.push_back('_'); osf.push_back('0'+pairUp); osf.push_back(')');
+				friendsPairingHelper(n,sorted,osf,ind+1);
+				for(int i=0;i<5;i++) osf.pop_back();
+				sorted[pairUp]=0;
+			}
+		}
+		sorted[ind] = 0;
+	}
+}
+
+void friendsPairing(int n) {
+	if(n==0) return;
+	if(n==1) {
+		cout<<"(1)"<<"\n";
+		return;
+	}
+	if(n==2) {
+		cout<<"(1)(2)"<<"(1 2)"<<"\n";
+		return;
+	}
+	vector<bool>sorted(n+1,0);
+	string osf="";
+	friendsPairingHelper(n,sorted,osf);
+}
