@@ -1,0 +1,36 @@
+void travelAndGetGold(vector<vector<int>>&grid, vector<vector<bool>>&visited, vector<int>&bag, int &sum, int currRow, int currCol) {
+	if(currRow<0||currCol<0||currRow>=grid.size()||currCol>=grid[0].size()||!grid[currRow][currCol]||visited[currRow][currCol]) return;
+	visited[currRow][currCol] = 1;
+	sum+=grid[currRow][currCol];
+	bag.push_back(grid[currRow][currCol]);
+	travelAndGetGold(grid,visited,bag,sum,currRow-1,currCol);
+	travelAndGetGold(grid,visited,bag,sum,currRow+1,currCol);
+	travelAndGetGold(grid,visited,bag,sum,currRow,currCol-1);
+	travelAndGetGold(grid,visited,bag,sum,currRow,currCol+1);
+}
+
+int getMaxGold(vector<vector<int>>&grid) {
+	if(grid.empty()) return 0;
+	int maxGold, currGold;
+	maxGold = currGold = 0;
+	vector<int>res,bag;
+	int rowBound = grid.size();
+	int colBound = grid[0].size();
+	vector<vector<bool>>visited(rowBound,vector<bool>(colBound,0));
+	for(int row=0;row<rowBound;row++) {
+		for(int col=0;col<colBound;col++) {
+			if(grid[row][col]!=0 and not visited[row][col]) {
+				currGold=0;
+				bag.clear();
+				travelAndGetGold(grid,visited,bag,currGold,row,col);
+				if(currGold > maxGold) {
+					maxGold = currGold;
+					res = bag;
+				}
+			}
+		}
+	}
+	for(auto &it:res) cout<<it<<" ";
+	cout<<"\n";
+	return maxGold;
+}
