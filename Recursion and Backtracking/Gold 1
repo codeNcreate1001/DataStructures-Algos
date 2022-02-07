@@ -1,0 +1,25 @@
+int travelAndCollectGold(vector<vector<int>>&grid, int currRow, int currCol) {
+    if(currRow<0 || currCol<0 || currRow>=grid.size() || currCol>=grid[0].size() || !grid[currRow][currCol]) return 0;
+    int ans=0,temp=grid[currRow][currCol];
+    grid[currRow][currCol]=0;
+    ans = max(ans,travelAndCollectGold(grid,currRow-1,currCol));
+    ans = max(ans,travelAndCollectGold(grid,currRow,currCol-1));
+    ans = max(ans,travelAndCollectGold(grid,currRow+1,currCol));
+    ans = max(ans,travelAndCollectGold(grid,currRow,currCol+1));
+    grid[currRow][currCol] = temp;
+    return temp+ans;
+}
+int getMaximumGold(vector<vector<int>>& grid) {
+    if(grid.empty()) return 0;
+    int rowBound = grid.size(); int colBound = grid[0].size();
+    int ans=0;
+    for(int row=0;row<rowBound;row++) {
+        for(int col=0;col<colBound;col++) {
+            if(grid[row][col]) {
+                int sum = travelAndCollectGold(grid,row,col);
+                ans = max(ans,sum);
+            }
+        }
+    }
+    return ans;
+}
