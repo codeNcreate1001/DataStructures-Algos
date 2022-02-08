@@ -1,0 +1,19 @@
+class Solution {
+public:
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int perimeter = 0;
+        int rowBound = grid.size();
+        int colBound = grid[0].size();
+        for(int row=0;row<rowBound;row++) {
+            for(int col=0;col<colBound;col++) {
+                if(grid[row][col] == 0) continue;
+                perimeter+=4;
+                if(row > 0) perimeter-=grid[row-1][col];
+                if(col > 0) perimeter-=grid[row][col-1];
+                if(row < rowBound-1) perimeter-=grid[row+1][col];
+                if(col < colBound-1) perimeter-=grid[row][col+1];
+            }
+        }
+        return perimeter;
+    }
+};
