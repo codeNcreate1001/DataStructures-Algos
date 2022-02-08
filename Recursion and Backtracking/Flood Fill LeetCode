@@ -1,0 +1,20 @@
+class Solution {
+private:
+    void floodFillHelper(vector<vector<int>>& image,const int source,const int newColor, int sr, int sc, int rowBound, int colBound) {
+        if(sr < 0 || sc < 0 || sr >= rowBound || sc >= colBound || image[sr][sc] != source) return;
+        image[sr][sc] = newColor;
+        floodFillHelper(image,source,newColor,sr-1,sc,rowBound,colBound);
+        floodFillHelper(image,source,newColor,sr+1,sc,rowBound,colBound);
+        floodFillHelper(image,source,newColor,sr,sc-1,rowBound,colBound);
+        floodFillHelper(image,source,newColor,sr,sc+1,rowBound,colBound);
+    }
+public:
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
+        int source = image[sr][sc];
+        if(newColor == source) return image;
+        int rowBound = image.size();
+        int colBound = image[0].size();
+        floodFillHelper(image,source,newColor,sr,sc,rowBound,colBound);
+        return image;
+    }
+};
