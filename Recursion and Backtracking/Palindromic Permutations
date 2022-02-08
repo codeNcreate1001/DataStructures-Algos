@@ -1,0 +1,53 @@
+void getPermutations(string &str, vector<string>&res, int ind=0) {
+	if(ind == str.length()) {
+		res.push_back(str);
+		return;
+	}
+	unordered_set<char>visited;
+	for(int i=ind;i<str.length();i++) {
+		if(visited.empty() || not visited.count(str[i])) {
+			visited.insert(str[i]);
+			swap(str[ind],str[i]);
+			getPermutations(str,res,ind+1);
+			swap(str[ind],str[i]);
+		}
+	}
+}
+void addOtherHalf(const int odds,const char oddCh, vector<string>&res) {
+	if(odds) {
+		for(int i=0;i<res.size();i++) {
+			string temp = res[i];
+			res[i].push_back(oddCh);
+			reverse(temp.begin(),temp.end());
+			res[i]+=temp;
+		}
+	} else {
+		for(int i=0;i<res.size();i++) {
+			string temp = res[i];
+			reverse(temp.begin(),temp.end());
+			res[i]+=temp;
+		}
+	}
+}
+vector<string>palindromePermutations(string &s) {
+	vector<string>res;
+	if(s.empty()) return res;
+	int stringLength = s.length();
+	vector<int>charFreq(26,0);
+	for(auto &it:s) charFreq[it-'a']++;
+	string firstHalf="";
+	char oddCh; int odds = 0;
+	for(int i=0;i<26;i++) {
+		if(charFreq[i]%2) {
+			oddCh = i+'a';
+			odds++;
+		}
+		int freqHalf = charFreq[i]/2;
+		for(int j=0;j<freqHalf;j++) firstHalf.push_back(i+'a');
+	}
+
+	if((not(stringLength&1) and odds!=0) or ((stringLength&1) and odds!=1)) return res;
+	getPermutations(firstHalf,res);
+	addOtherHalf(odds,oddCh,res);
+	return res;
+}
