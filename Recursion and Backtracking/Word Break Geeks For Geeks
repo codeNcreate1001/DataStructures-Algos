@@ -1,0 +1,28 @@
+void wordBreakHelper(string &s, unordered_set<string>&dict, vector<string>&res, string &out, int ind=0) {
+	if(ind == s.length()) {
+		out.pop_back(); // remove the last added whitespace
+		res.push_back(out);
+		out+=" "; // revert the string back to original ( backtracking step )
+		return;
+	}
+
+	for(int i=ind;i < s.length();i++) {
+		string prefix = s.substr(ind,i-ind+1);
+		// cout<<prefix<<"\n";
+		if(dict.count(prefix)) {
+			out+=prefix; 
+			out+=" ";
+			int len = prefix.size() + 1;
+			wordBreakHelper(s,dict,res,out,i+1);
+			for(int counter = 0; counter < len;counter++) out.pop_back(); // revert the string to original form ( backtracking step )
+		}
+	}
+}
+
+vector<string>wordBreak(string &s, unordered_set<string>&dict) {
+	if(s.empty()) return {};
+	string out="";
+	vector<string>res;
+	wordBreakHelper(s,dict,res,out);
+	return res;
+}
