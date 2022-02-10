@@ -1,0 +1,88 @@
+// To print one pattern
+
+bool patternMatchUtil(string &s,int stringSize,string &pattern, int patternSize,unordered_map<char, string>& map,int ind1=0, int ind2=0) {
+	if (ind1 == stringSize && ind2 == patternSize) return true;
+	if (ind1 == stringSize || ind2 == patternSize) return false;
+
+	char ch = pattern[ind2];
+	if (map.find(ch)!= map.end()) {
+		string previousMapping = map[ch];
+		int len = previousMapping.size();
+
+		string prefix = "";
+		if(len <= stringSize - ind1) prefix = s.substr(ind1, len);
+
+		if (prefix.compare(previousMapping)) return false;
+		return patternMatchUtil(s,stringSize,pattern,patternSize,map,ind1 + len,ind2 + 1);
+	}
+
+	for (int len = 1; len <= stringSize - ind1; len++) {
+		string prefix = s.substr(ind1,len);
+		map[ch] = prefix;
+		if (patternMatchUtil(s,stringSize,pattern,patternSize,map,ind1 + len,ind2 + 1)) return true;
+		map.erase(ch);
+	}
+	return false;
+}
+
+// A wrapper over patternMatchUtil()function
+bool patternMatch(string s, string pattern, int stringSize, int patternSize) {
+	if (stringSize < patternSize)
+	return false;
+
+	unordered_map<char,string> map;
+	bool res = patternMatchUtil(s,stringSize,pattern,patternSize,map);
+
+	for (auto it = map.begin(); res && it != map.end(); it++)
+		cout << it->first << "->" << it->second << endl;
+
+	return res;
+}
+
+// Print all patterns
+
+void patternMatchUtil(string &s,int stringSize,string &pattern, int patternSize,unordered_map<char, string>& map,vector<vector<pair<char,string>>>&ans,int ind1=0, int ind2=0) {
+	if (ind1 == stringSize && ind2 == patternSize){
+		vector<pair<char,string>>temp;
+		for(auto &it:map) {
+			temp.push_back({it.first,it.second});
+		}
+		ans.push_back(temp);
+		return;
+	}
+	if (ind1 == stringSize || ind2 == patternSize) return;
+
+	char ch = pattern[ind2];
+	if (map.find(ch)!= map.end()) {
+		string previousMapping = map[ch];
+		int len = previousMapping.size();
+
+		string prefix = "";
+		if(len <= stringSize - ind1) prefix = s.substr(ind1, len);
+
+		if (prefix.compare(previousMapping) == 0){
+			patternMatchUtil(s,stringSize,pattern,patternSize,map,ans,ind1 + len,ind2 + 1);
+		}
+	} else {
+		for (int len = 1; len <= stringSize - ind1; len++) {
+			string prefix = s.substr(ind1,len);
+			map[ch] = prefix;
+			patternMatchUtil(s,stringSize,pattern,patternSize,map,ans,ind1 + len,ind2 + 1);
+			map.erase(ch);
+		}
+	}
+}
+
+// A wrapper over patternMatchUtil()function
+void patternMatch(string s, string pattern, int stringSize, int patternSize) {
+	if (stringSize < patternSize) return;
+	unordered_map<char,string> map;
+	vector<vector<pair<char,string>>>ans;
+	patternMatchUtil(s,stringSize,pattern,patternSize,map,ans);
+	for(auto &it:ans) {
+		for(auto&it1:it) {
+			cout<<it1.first <<setw(11)<<it1.second<<"\n";
+		}
+		cout<<"\n************\n\n";
+	}
+}
