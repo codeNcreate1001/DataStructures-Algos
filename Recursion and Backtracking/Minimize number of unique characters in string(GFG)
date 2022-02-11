@@ -1,0 +1,31 @@
+void minCountUtil(string &A, string &B,unordered_map<char, int>& ele,int& ans, int ind=0) {
+    if (ind == A.length()) {
+        ans = min(ans, (int)ele.size());
+        return;
+    }
+  
+    swap(A[ind], B[ind]);
+    ele[A[ind]]++;
+    minCountUtil(A, B, ele, ans, ind + 1);
+    swap(A[ind], B[ind]); // Backtrack (Undo the changes done)
+    ele[A[ind]]--;
+  
+    // If count of character is reduced to zero, then that character is not present in A.
+    // So remove that character from map.
+    if (ele[A[ind]] == 0) 
+        ele.erase(A[ind]);
+
+    ele[A[ind]]++;
+    minCountUtil(A, B, ele, ans, ind + 1);
+    ele[A[ind]]--;
+    if (ele[A[ind]] == 0) 
+        ele.erase(A[ind]);    
+}
+  
+int minCount(string &A, string &B) {
+	if(A.length() != B.length()) return -1;
+    int ans = A.length();
+    unordered_map<char,int> ele;
+    minCountUtil(A,B,ele,ans);
+    return ans;
+}
