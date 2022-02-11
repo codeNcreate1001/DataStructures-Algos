@@ -1,0 +1,55 @@
+#define UNASSIGNED -1
+
+bool isValidPos(vector<vector<int>>&grid,const int row,const int col) {
+	return ((row>=0 and col>=0) and (row < grid.size() and col < grid[0].size()) and grid[row][col] !=0);
+}
+
+bool isSafe(vector<vector<int>>&grid,int currRow, int currCol, const int num) {
+	vector<pair<int,int>>dirXY = {{-1,0},{1,0},{0,-1},{0,1},{-1,-1},{-1,1},{1,-1},{1,1}};
+	for(int i=0;i<dirXY.size();i++)
+		if(isValidPos(grid,currRow+dirXY[i].first,currCol+dirXY[i].second) and abs(num - grid[currRow+dirXY[i].first][currCol+dirXY[i].second]) <=1)
+			return false;
+	return true;
+}
+
+bool findUnassignedPos(vector<vector<int>>&grid, int &currRow, int &currCol) {
+	for(currRow = 0;currRow < grid.size();currRow++) {
+		for(currCol = 0; currCol < grid[0].size(); currCol++) {
+			if(grid[currRow][currCol] == UNASSIGNED) return true;
+		}
+	}
+	return false;
+}
+
+bool fillGrid(vector<vector<int>>&grid, vector<bool>&used, const int countUnassigned) {
+	int row, col;
+	if(not findUnassignedPos(grid, row, col)) return true;
+	for(int num = 1;num <= countUnassigned;num++) {
+		if(not used[num] and isSafe(grid,row,col,num)) {
+			grid[row][col] = num;
+			used[num] = 1;
+			if(fillGrid(grid,used,countUnassigned)) return true;
+			grid[row][col] = UNASSIGNED;
+			used[num] = 0;
+		}
+	}
+	return false;
+}
+
+void solveGrid(vector<vector<int>>&grid) {
+	vector<bool>used(9,0);
+	int countUnassigned = 0;
+	for(auto &it:grid) {
+		for(auto &it1:it) if(it1 == UNASSIGNED)  countUnassigned++;
+	}
+	if(fillGrid(grid,used,countUnassigned)) {
+		for(auto &it:grid) {
+			for(auto &it1:it) {
+				if(it1!=0) cout<<it1<<setw(grid[0].size());
+				else cout<<" "<<setw(grid[0].size());
+			}
+			cout<<"\n";
+		}
+	}
+	else cout<<"NO SOLUTION\n";
+}
