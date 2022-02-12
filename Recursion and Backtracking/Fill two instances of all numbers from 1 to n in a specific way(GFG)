@@ -1,3 +1,5 @@
+// One Combination 
+
 bool fillInstancesHelper(vector<int>&res, int curr, int n) {
 	if(curr == 0) return true;
 	for(int i=0;i<2*n-(curr+1);i++) {
@@ -16,4 +18,30 @@ void fillInstances(int n) {
 		for(auto &it:res) cout<<it<<" ";
 		cout<<"\n";
 	} else cout<<"NO SOLUTION\n";
+}
+
+// All Combinations
+void allCombinationsHelper(vector<int> &res, int elem, int n) {
+    if (elem > n) {
+        for (auto &i : res) cout <<i<< " ";
+        cout << "\n";
+        return;
+    }
+ 
+    for (int i = 0; i < 2*n; i++) {
+        if ((res[i] == 0) && ((i + elem + 1) < 2*n && res[i + elem + 1] == 0)) {
+            res[i] = elem;
+            res[i + elem + 1] = elem;
+            allCombinationsRec(res, elem + 1, n);
+            res[i] = 0;
+            res[i + elem + 1] = 0;
+        }
+    }
+}
+
+void allCombinations(int n) {
+    vector<int> res(2*n, 0);
+    int elem = 1;
+    // start from element 1
+    allCombinationsRec(res, elem, n);
 }
