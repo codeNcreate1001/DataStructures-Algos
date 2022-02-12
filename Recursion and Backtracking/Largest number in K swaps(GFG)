@@ -1,0 +1,30 @@
+void findMaxNumHelper(string &s, int k, string &max, int ind=0) {
+   	if(k == 0) return;
+    
+    int n = s.length();
+
+    char maxCh = s[ind]; // find max character present after current index
+    for(int i = ind+1;i < n;i++){
+        if(maxCh < s[i]) maxCh = s[i];
+    }
+    
+    if(maxCh != s[ind]) k-=1; // maxDigit found, then swap possible. Decrease k therefore
+    
+    for(int i = ind;i < n;i++){
+        if(s[i]==maxCh){ // swap when found
+            swap(s[i],s[ind]);
+            if (s.compare(max) > 0) // number is greater
+                max = s;
+                
+            findMaxNumHelper(s, k,max, ind+1);
+            swap(s[i],s[ind]);
+        }
+
+    }
+}
+
+string findMaximumNum(string &s, int k) {
+	string max=s;
+	findMaxNumHelper(s, k, max);
+	return max;
+}
