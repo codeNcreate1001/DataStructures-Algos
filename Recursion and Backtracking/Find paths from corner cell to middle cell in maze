@@ -1,0 +1,53 @@
+bool isValidPos(set<pair<int,int>>&visited,pair<int,int>&currPos,const int bound) {
+	return ((currPos.first>=0 and currPos.first<bound) and (currPos.second>=0 and currPos.second<bound) and visited.find(currPos) == visited.end());
+}
+
+void findPathsInMazeHelper(const vector<vector<int>>&maze,list<pair<int,int>>&path,set<pair<int,int>>&visited,pair<int,int>&currPos,const vector<vector<int>>&dir) {
+	const int N = maze.size();
+	if(currPos.first == N/2 and currPos.second == N/2) {
+		int counter = 0;
+		for (auto it = path.begin(); it != path.end(); it++) {
+			cout << "(" << it->first << ", "<< it->second << ") -> ";
+			if(counter++ == 3) {
+				cout<<"\n";
+				counter = 0;
+			}
+			// counter++;
+		}
+		cout<<"MID\n\n";
+		return;
+	}
+
+	for(int i = 0;i < 4;i++) {
+		int n = maze[currPos.first][currPos.second];
+		int x = currPos.first + dir[i][0]*n;
+		int y = currPos.second + dir[i][1]*n;
+
+		pair<int,int>next = make_pair(x,y);
+		if(isValidPos(visited,next,maze.size())) {
+			visited.insert(next);
+			path.push_back(next);
+			findPathsInMazeHelper(maze,path,visited,next,dir);
+			visited.erase(next);
+			path.pop_back();
+		}
+	}
+}
+
+void findPathsInMaze(vector<vector<int>>&maze) {
+	int N = maze.size();
+	list<pair<int,int>>path;
+	set<pair<int,int>>visited;
+	vector<vector<int>>cornerPos = {{0,0},{0,N-1},{N-1,0},{N-1,N-1}};
+	vector<vector<int>>dir = {{-1,0},{1,0},{0,-1},{0,1}};
+	for(int i = 0;i < 4;i++) {
+		int x = cornerPos[i][0];
+		int y = cornerPos[i][1];
+		pair<int,int>currPos = make_pair(x,y);
+		visited.insert(currPos);
+		path.push_back(currPos);
+		findPathsInMazeHelper(maze,path,visited,currPos,dir);
+		visited.erase(currPos);
+		path.pop_back();
+	}
+}
