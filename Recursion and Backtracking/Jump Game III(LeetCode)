@@ -1,0 +1,13 @@
+bool canReachHelper(vector<int> &arr, unordered_set<int> &visited, int startInd) {
+    if(startInd < 0 || startInd >= arr.size() || visited.find(startInd) != visited.end()) return false;
+    if(arr[startInd] == 0) return true;
+    visited.insert(startInd);
+    bool left = canReachHelper(arr,visited,startInd + arr[startInd]);
+    bool right = canReachHelper(arr,visited,startInd - arr[startInd]);
+    return left || right;
+}
+
+bool canReach(vector<int>& arr, int startInd) {
+    unordered_set<int>visited;
+    return canReachHelper(arr,visited,startInd);
+}
