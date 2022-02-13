@@ -11,3 +11,16 @@ bool canReach(vector<int>& arr, int startInd) {
     unordered_set<int>visited;
     return canReachHelper(arr,visited,startInd);
 }
+
+
+// In O(1) Space 
+bool canReach(vector<int>& arr, int startInd) {
+    if(startInd < 0 || startInd >= arr.size() || arr[startInd] == -1) return false;
+    if(arr[startInd] == 0) return true;
+    int temp = arr[startInd];
+    arr[startInd] = -1;
+    bool left = canReach(arr,startInd + temp);
+    bool right = canReach(arr,startInd - temp);
+    arr[startInd] = temp;
+    return left || right;
+}
