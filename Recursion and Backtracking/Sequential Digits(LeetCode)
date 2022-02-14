@@ -1,0 +1,16 @@
+class Solution {
+private:
+    void generateSequentialDigits(vector<int>&res,const int low, const int high, int ind, int num=0) {
+        if(num>=low and num<=high) res.push_back(num);
+        if(num > high || ind > 9 ) return;
+        generateSequentialDigits(res,low,high,ind+1,(num*10) + ind);
+    }
+public:
+    vector<int> sequentialDigits(int low, int high) {
+        vector<int>res;
+        for(int ind=1;ind<=9;ind++)
+            generateSequentialDigits(res,low,high,ind);
+        sort(res.begin(), res.end());
+        return res;
+    }
+};
