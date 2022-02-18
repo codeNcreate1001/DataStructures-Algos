@@ -1,0 +1,58 @@
+// Method 1: DFS
+void combinations(const int totalBoxes, const int totalSelections, string &combination, int currentBox = 0, int selectionsSoFar = 0) {
+	if(currentBox == totalBoxes and selectionsSoFar == totalSelections) {
+		combination.pop_back(); // remove the last comma inserted
+		cout<<combination<<"\n";
+		combination.push_back(','); // backtrack
+		return;
+	}
+	if(currentBox > totalBoxes) return;
+	
+	// Dont Select Current Box
+	combination.push_back('_');
+	combination.push_back(',');
+	combinations(totalBoxes, totalSelections, combination,currentBox+1,selectionsSoFar);
+	combination.pop_back();
+	combination.pop_back();
+
+	// Select Current Box
+	combination.push_back('i');
+	combination.push_back(',');
+	combinations(totalBoxes, totalSelections, combination,currentBox+1,selectionsSoFar + 1);
+	combination.pop_back();
+	combination.pop_back();
+}
+
+
+void printCombinations(const int totalBoxes, const int totalSelections) { // total boxes = n, totalSelections = r
+	if(totalBoxes < totalSelections) return;
+	string combination="";
+	combinations(totalBoxes,totalSelections,combination);
+}
+
+// Methiod 2: BFS
+void combinations2(const int totalSelections,string &combination, int selections = 0,int ind=0) {
+	if(selections == totalSelections) {
+		for(int i=0;i<combination.size();i++) {
+			if(combination[i]!='_') cout<<"["<<combination[i]<<"]";
+			else cout<<"[ ]";
+			if(i != combination.size() - 1) cout<<",";
+		}
+		cout<<"\n";
+		return;
+	}
+
+	for(int i = ind;i<combination.size();i++) {
+		combination[i] = 'i';
+		combinations2(totalSelections,combination,selections+1, i+1);
+		combination[i] = '_';
+	}
+}
+
+void printCombinations2(const int totalBoxes, const int totalSelections) {
+	if(totalBoxes < totalSelections) return;
+
+	string combination; // make places for items
+	for(int i=0;i<totalBoxes;i++) combination.push_back('_');
+	combinations2(totalSelections,combination);
+}
