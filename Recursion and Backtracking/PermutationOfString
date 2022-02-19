@@ -1,0 +1,56 @@
+// When n == r but duplicates present
+// Method 1: Using count of a character
+void permuteWords(const int totalPlaces,map<char,int>&charFreq,string &osf,int boxNo=0){
+    if(boxNo == totalPlaces){
+        cout << osf << endl;
+        return;
+    }
+    
+    for(auto &it: charFreq){
+        if(it.second > 0){
+            it.second -= 1;
+            osf.push_back(it.first);
+            permuteWords(totalPlaces, charFreq, osf, boxNo+1);
+            osf.pop_back();
+            it.second += 1;
+        }
+    }
+    
+}
+
+void permute(string &s) {
+    map<char, int> charFreq;
+    for(const auto &ch: s) charFreq[ch] += 1;
+    string osf="";
+    permuteWords(s.size(), charFreq, osf);
+}
+
+// Method 2: Using last index of occurence of a character
+void permuteWords2(const string &s,const int stringSize, string &out, unordered_map<char, int>& lastOccurence, int ind = 0){
+    if(ind == stringSize){
+        cout<<out<<"\n";
+        return;
+    }
+
+    // PLACE DUPLICATES AT THOSE INDEXES THAT OCCUR ONLY AFTER ITS ORIGINAL FORM HAS ONLY OCCURED AT AN INDEX
+    char currentCharacter = s[ind];
+    int indOccured = lastOccurence[currentCharacter];
+    for(int i = indOccured+1; i < stringSize; i++){
+        if(out[i] == '_'){
+            out[i] = currentCharacter;
+            lastOccurence[s[ind]] = i;
+            permuteWords2(s,stringSize,out,lastOccurence,ind+1);
+            lastOccurence[s[ind]] = -1;
+            out[i] = '_';
+        }
+    }
+}
+
+void permute2(string &s) {
+	unordered_map<char,int>lastOccurence;
+    for(const auto &it: s) lastOccurence[it] = -1;
+    int stringSize = s.size();
+    string out;
+    for(int i=0;i<stringSize;i++) out.push_back('_');
+    permuteWords2(s, stringSize, out, lastOccurence);
+}
