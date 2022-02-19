@@ -1,0 +1,24 @@
+// When n == r but duplicates present
+void permutationHelper(vector<int>&nums, vector<vector<int>>&res, int ind=0) {
+    if(ind == nums.size()) {
+        res.push_back(nums);
+        return;
+    }
+    unordered_set<int>visited;
+    for(int i=ind;i<nums.size();i++) {
+        if(visited.empty() or visited.find(nums[i]) == visited.end()) {
+            visited.insert(nums[i]);
+            swap(nums[i],nums[ind]);
+            permutationHelper(nums,res,ind+1);
+            swap(nums[i],nums[ind]);
+        }
+    }
+}
+
+vector<vector<int>> permuteUnique(vector<int>& nums) {
+    vector<vector<int>>res;
+    if(nums.empty()) return res;
+    sort(nums.begin(),nums.end());
+    permutationHelper(nums,res); 
+    return res;
+}
