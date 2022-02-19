@@ -1,3 +1,4 @@
+// Permuations of Distinct Elements when no. of items == no. of places
 void findPermute(vector<vector<int>>&ans,vector<int>&temp,vector<int>&nums,unordered_map<int,int>&visited){
     if(temp.size()==nums.size()) {
         ans.push_back(temp);
@@ -16,12 +17,31 @@ void findPermute(vector<vector<int>>&ans,vector<int>&temp,vector<int>&nums,unord
 }
 
 
-vector<vector<int>>permute(vector<int>&nums)
-{
+vector<vector<int>>permute(vector<int>&nums) {
     vector<vector<int>>ans; // store the ans
     vector<int>temp; // store the permutation temporarily
     unordered_map<int,int>visited; // to check the presence of the digit in the permutation
     for(auto &it : nums) visited[it] = 0;
     findPermute(ans,temp,nums,visited);
+    return ans;
+}
+
+// Space Optimised
+void findPermute(vector<vector<int>>&ans,vector<int>&nums,int ind=0){
+    if(ind==nums.size()) {
+        ans.push_back(nums);
+        return;
+    }
+    for(int i=ind;i<nums.size();i++) {
+        swap(nums[ind],nums[i]); // swap between possible indexes to find permutations
+        findPermute(ans,nums,ind+1); // move to the next index
+        swap(nums[ind],nums[i]); // backtracking step
+    }
+}
+
+
+vector<vector<int>>permute(vector<int>&nums) {
+    vector<vector<int>>ans;
+    findPermute(ans,nums);
     return ans;
 }
