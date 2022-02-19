@@ -1,0 +1,84 @@
+// Permutations 1
+
+void permute1(vector<int>&boxes, const int totalItems, int currentItem = 0) {
+	if(currentItem == totalItems) {
+		int counter = 0;
+		for(const auto &it : boxes) {
+			if(it == 0) cout<<"[]";
+			else cout<<it;
+			if(counter < boxes.size()-1) {
+				cout<<",";
+			}
+			counter++;
+		}
+		cout<<"\n";
+		return;
+	}
+
+	for(auto &it:boxes) {
+		if(it == 0) {
+			it = currentItem;
+			permute(boxes,totalItems, currentItem + 1);
+			it = 0;
+		}
+	}
+}
+
+void printPermutations1(const int totalItems, const int totalBoxes) {
+	if(totalBoxes < totalItems) return;
+	vector<int>boxes(totalBoxes,0);
+	permute(boxes, totalItems);
+}
+
+
+// Permutations 2
+
+string box = "[],";
+void permute2(const int totalPlaces, const int totalItems, vector<bool>&visited, string &out,int selectionssOFar=0, int currentBox = 0) {
+	if(currentBox == totalPlaces and selectionssOFar == totalItems) {
+		out.pop_back(); // REMOVE THE LAST ADDED COMMA
+		cout<<out<<"\n";
+		out.push_back(','); // REVERT THE CHANGE FOR BACKTRACKING
+		return;
+	}
+	if(currentBox > totalPlaces) return;
+
+	// DONT SELECT CURRENT BOX
+	for(int pushCounter=0;pushCounter<box.size();pushCounter++) {
+		out.push_back(box[pushCounter]);
+		if(pushCounter==0)	out+=" "; 	// ADD EMPTY BOX IN ANS
+	}
+
+	// RECURSE FOR NEXT BOX
+	permute2(totalPlaces, totalItems, visited, out, selectionssOFar, currentBox + 1); 
+
+	// REMOVE THE EMPTY BOX FROM ANSWER FOR BACKTRACKING
+	for(int popCounter=0;popCounter<4;popCounter++)	out.pop_back();
+
+
+	// SELECT CURRENT BOX AND PLACE ITEMS
+	for(int item = 1; item <= totalItems; item++) { 
+		if(visited[item] == 0) { // ITEM NOT VISITED
+
+			visited[item] = 1; // MARK ITEM VISITED
+			for(int pushCounter=0;pushCounter<box.size();pushCounter++) {
+				out.push_back(box[pushCounter]); // ADD NON-EMPTY BOX 
+				if(pushCounter==0)	out.push_back('0' + item); // ADD THE ITEM INSIDE THE BOX
+			}
+			
+			permute2(totalPlaces, totalItems, visited, out, selectionssOFar + 1,currentBox + 1);
+			for(int j=0;j<4;j++)	out.pop_back(); // REMOVE THE NON-EMPTY BOX FOR BACKTRACKING
+			visited[item] = 0; // UNMARK THE VISITED ITEM
+		}
+	}
+}
+
+void printPermutations2(const int totalPlaces, const int totalItems) { // totalPlaces = n, totalItems = r
+	if(totalItems > totalPlaces) {
+		cout<<"NOT POSSIBLE TO PERMUTE "<<totalItems<<" in "<<totalPlaces<<" places.\n";
+		return;
+	}
+	vector<bool>visited(totalItems + 1,0);
+	string out = "";
+	permute2(totalPlaces, totalItems, visited, out);
+}
