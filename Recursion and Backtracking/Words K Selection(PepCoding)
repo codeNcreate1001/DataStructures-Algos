@@ -1,0 +1,117 @@
+// Method 1 : Inclusion Exclusion Principle
+
+void selectCharacters1(string &s, string &out, const int totalCh, int ind = 0) {
+	if(out.size() == totalCh) {
+		cout<<out<<"\n";
+		return;
+	}
+
+	if(ind == s.size()) return;
+
+	out.push_back(s[ind]);
+	selectCharacters1(s,out,totalCh,ind+1);
+	out.pop_back();
+	selectCharacters1(s,out,totalCh,ind+1);
+}
+
+void KSelect1(string &s, const int k) {
+	if(k > s.size()) return;
+	string input,output;
+	input = output = "";
+	unordered_set<char>present;
+	for(const auto &it:s) {
+		if(present.find(it) == present.end()) {
+			input.push_back(it);
+			present.insert(it);
+		}
+	}
+	selectCharacters1(input,output,k); 
+}
+
+// Method 2 : Placing consecutive elements based on the index where previous element was placed
+
+void selectCharacters2(string &s, string &out, const int totalCh, int ind = 0) {
+	if(out.size() == totalCh) {
+		cout<<out<<"\n";
+		return;
+	}
+	for(int i=ind;i<s.size();i++) {
+		out.push_back(s[i]);
+		selectCharacters2(s,out,totalCh,i+1);
+		out.pop_back();
+	}
+}
+
+void KSelect2(string &s, const int k) {
+	if(k > s.size()) return;
+
+	string input,output;
+	input = output = "";
+	unordered_set<char>present;
+	for(const auto &it:s) {
+		if(present.find(it) == present.end()) {
+			input.push_back(it);
+			present.insert(it);
+		}
+	}
+
+	selectCharacters2(input,output,k); 
+}
+
+// When Duplicates can participate in the combination
+
+// Method 1: Based on last character
+
+void selectCharacters1(string &s, string &out, const int totalCh, int ind = 0) {
+	if(out.size() == totalCh) {
+		cout<<out<<"\n";
+		return;
+	}
+	for(int i = ind;i<s.size();i++) {
+		if(i == ind or s[i] != s[i-1]) {
+			out.push_back(s[i]);
+			selectCharacters1(s,out,totalCh,i+1);
+			out.pop_back();
+		}
+	}
+}
+
+void KSelect1(string &s, const int k) {
+	if(k > s.size()) return;
+	string output = "";
+	selectCharacters1(s,output,k); 
+}
+
+// Method 2: Based on Inlclusion Exclusion
+
+void characterSelection(string &s, string &out, const int totalCh, vector<int> &charFreq, int ind = 0){
+    if(out.size() == totalCh) {
+    	cout<<out<<"\n";
+    	return;
+    }
+
+    if(ind == s.size()) return;
+    
+   if(charFreq[s[ind] - 'a'] > 0){
+       charFreq[s[ind] - 'a']--;
+       out.push_back(s[ind]);
+       characterSelection(s, out, totalCh, charFreq, ind); // can pick until exhausted
+       out.pop_back();
+       charFreq[s[ind] - 'a']++;
+   }
+
+   characterSelection(s, out, totalCh, charFreq, ind+1); // move to next character
+}
+
+void KSelect1(string &s, const int k) {
+	if(k > s.size()) return;
+
+	string input="";
+	string output="";
+	vector<int>charFreq(26,0);
+	for(const auto &it:s) {
+		if(charFreq[it - 'a'] == 0) input.push_back(it);
+		charFreq[it - 'a']++;
+	}
+	characterSelection(input,output,k,charFreq);
+}
